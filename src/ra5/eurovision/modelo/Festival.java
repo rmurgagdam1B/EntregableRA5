@@ -44,6 +44,7 @@ public class Festival {
      * si existe el país se añaden los puntos
      */
     public void addPuntos(String pais, int puntos) {
+
         pais = pais.toUpperCase();
         if (festival.containsKey(pais)){
             int puntosActuales = festival.get(pais);
