@@ -2,6 +2,7 @@ package ra5.eurovision.modelo;
 
 import com.sun.media.jfxmediaimpl.HostUtils;
 
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -131,12 +132,11 @@ public class Festival {
     public String ganador() {
         int max = 0;
         String nomGanador = "";
-        for (int i = 0; i < festival.size(); i++) {
-            if (festival.get(i) > max)
-            max = festival.get(i);
-            nomGanador = festival.getOrDefault(i, );
+        for (String pais : festival.keySet()) {
+            if (festival.get(pais) > max)
+                max = festival.get(pais);
+                nomGanador = pais;
         }
-
         return nomGanador;
     }
 
