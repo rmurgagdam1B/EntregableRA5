@@ -1,5 +1,7 @@
 package ra5.eurovision.modelo;
 
+import com.sun.media.jfxmediaimpl.HostUtils;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -24,13 +26,13 @@ import java.util.TreeMap;
 public class Festival {
 
     private static final String SALIDA = "resultados.txt";
-  //  private      festival;
+    private Map<String, Integer> festival;
 
     /**
      * Constructor de la clase FestivalEurovision
      */
     public Festival() {
-       //TODO
+       festival = new TreeMap();
 
     }
 
@@ -41,10 +43,14 @@ public class Festival {
      * si existe el país se añaden los puntos
      */
     public void addPuntos(String pais, int puntos) {
-        //TODO
-
-
-
+        pais = pais.toUpperCase();
+        if (festival.containsKey(pais)){
+            int puntosActuales = festival.get(pais);
+            festival.put(pais, puntosActuales + puntos);
+        }
+        else {
+            festival.put(pais, puntos);
+        }
     }
 
     /**
@@ -59,12 +65,26 @@ public class Festival {
      * Usar try-with-resources
      */
     public int leerPuntuaciones(String nombre) {
-        //TODO
-
-
-        return 0;
-
+        File f = new File(nombre);
+        int errores = 0;
+        try (BufferedReader entrada = new BufferedReader(new FileReader(f))) {
+            String linea = entrada.readLine();
+            while (linea != null){
+                try {
+                    tratarLinea(linea);
+                } catch (IllegalArgumentException e) {
+                    errores++;
+                }
+                entrada.readLine();
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("El fichero no existe o no se ha encontrado: " + e.getMessage());
+        } catch (IOException e) {
+            System.out.println("Error en la lectura del fichero: " + e.getMessage());
+        }
+        return errores;
     }
+
 
     /**
      * A partir de una línea extrae los puntos dados a cada uno de los países indicados
@@ -76,9 +96,16 @@ public class Festival {
      * Se propagan las posibles excepciones
      */
     private void tratarLinea(String linea) throws NumberFormatException, IllegalArgumentException {
-        //TODO
-
+        String[] trozos = linea.split(":");
+        String nomPais;
+        int puntosPais;
+        for (int i = 0; i < trozos.length; i+=2) {
+            nomPais = trozos[i];
+            puntosPais = Integer.parseInt(trozos[i+1]);
+            addPuntos(nomPais, puntosPais);
+        }
     }
+
 
     /**
      * Dado un país devuelve su puntuación
@@ -88,11 +115,13 @@ public class Festival {
      * Se propagan las posibles excepciones
      */
     public int puntuacionDe(String pais) throws PaisExcepcion {
-        //TODO
-
-
-        return 0;
-
+        int puntuacion = 0;
+        if (festival.containsKey(pais.toUpperCase())){
+            puntuacion = festival.get(pais);
+        } else {
+            throw new PaisExcepcion("El país " + pais + " no existe");
+        }
+        return puntuacion;
     }
 
     /**
@@ -100,10 +129,15 @@ public class Festival {
      * (el primero encontrado)
      */
     public String ganador() {
-        //TODO
+        int max = 0;
+        String nomGanador = "";
+        for (int i = 0; i < festival.size(); i++) {
+            if (festival.get(i) > max)
+            max = festival.get(i);
+            nomGanador = festival.getOrDefault(i, );
+        }
 
-
-        return null;
+        return nomGanador;
     }
 
     /**
@@ -113,13 +147,12 @@ public class Festival {
      * Usar try-with-resources
      */
     public void guardarResultados() throws IOException {
-        //TODO
-
-
-
+        File f = new File(SALIDA);
+        try (PrintWriter salida = new PrintWriter(new BufferedWriter(new FileWriter(f)))) {
+            for (Integer n : festival.values()) {
+                salida.println(n);
+            }
+        }
     }
-
-
-
 
 }
