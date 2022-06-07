@@ -149,8 +149,10 @@ public class Festival {
     public void guardarResultados() throws IOException {
         File f = new File(SALIDA);
         try (PrintWriter salida = new PrintWriter(new BufferedWriter(new FileWriter(f)))) {
-            for (Integer n : festival.values()) {
-                salida.println(n);
+            for (String pais : festival.keySet()) {
+                salida.println(pais);
+                salida.print(" --> ");
+                salida.print(festival.get(pais));
             }
         }
     }
