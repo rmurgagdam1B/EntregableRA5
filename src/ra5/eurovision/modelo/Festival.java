@@ -77,7 +77,7 @@ public class Festival {
                 } catch (IllegalArgumentException e) {
                     errores++;
                 }
-                entrada.readLine();
+                linea = entrada.readLine();
             }
         } catch (FileNotFoundException e) {
             System.out.println("El fichero no existe o no se ha encontrado: " + e.getMessage());
@@ -101,10 +101,8 @@ public class Festival {
         String[] trozos = linea.split(":");
         String nomPais;
         int puntosPais;
-        for (int i = 0; i < trozos.length; i+=2) {
-            nomPais = trozos[i];
-            puntosPais = Integer.parseInt(trozos[i+1]);
-            addPuntos(nomPais, puntosPais);
+        for (int i = 0; i < trozos.length - 1; i+=2) {
+            addPuntos(trozos[i].trim(), Integer.parseInt(trozos[i+1].trim()));
         }
     }
 
@@ -151,9 +149,7 @@ public class Festival {
         File f = new File(SALIDA);
         try (PrintWriter salida = new PrintWriter(new BufferedWriter(new FileWriter(f)))) {
             for (String pais : festival.keySet()) {
-                salida.println(pais);
-                salida.print(" --> ");
-                salida.print(festival.get(pais));
+                salida.println(pais + " --> " + festival.get(pais) + " puntos");
             }
         }
     }

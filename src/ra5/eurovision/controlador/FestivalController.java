@@ -19,6 +19,8 @@ public class FestivalController {
         festival = new Festival();
     }
 
+    private boolean fichero = false;
+
     @FXML
     private Button clear;
 
@@ -32,7 +34,7 @@ public class FestivalController {
     private CheckBox chkGuardarFichero; // OK
 
     @FXML
-    private MenuItem menuLeer; //
+    private MenuItem menuLeer; // OK
 
     @FXML
     private MenuItem salir; //
@@ -43,10 +45,7 @@ public class FestivalController {
     @FXML
     private TextField txtPais;
 
-    @FXML
-    void salir(ActionEvent event) {
-        Platform.exit();
-    }
+
 
     @FXML
     void setMenuLeer(){
@@ -59,26 +58,48 @@ public class FestivalController {
         File f = selector.showOpenDialog(null);
         if (f != null) {
             txtArea.setText("Había " + festival.leerPuntuaciones(f.getAbsolutePath()) + "errores");
+            fichero = true;
         }
+    }
 
+    @FXML
+    void setTxtPais(){
+        txtPais.getText();
     }
 
     @FXML
     void salvarEnFichero() throws IOException {
-        festival.guardarResultados();
+        if (!fichero){
+            txtArea.setText("No se ha cargado el fichero");
+        }
+        else {
+            festival.guardarResultados();
+            txtArea.setText("El fichero se ha guardado correctamente");
+        }
     }
 
     @FXML
     void setBtnMostrarGanador(){
-        festival.ganador();
-        txtArea.setText(festival.ganador());
+        if (!fichero){
+            txtArea.setText("No ha cargado el fichero de puntuaciones");
+        } else {
+            txtArea.setText("El ganador es: " + festival.ganador().toUpperCase());
+        }
     }
 
     @FXML
-    void setBtnMostrarPuntos() throws PaisExcepcion {
-        String pais = txtPais.getText();
-        festival.puntuacionDe(pais);
-        txtArea.setText(String.valueOf(festival.puntuacionDe(pais)));
+    void setBtnMostrarPuntos()  {
+        if (!fichero){
+            txtArea.setText("No ha cargado el fichero de puntuaciones");
+        }
+        else {
+            try {
+                txtArea.setText("País: " + txtPais.getText().toUpperCase() +
+                        "; Puntos: " + festival.puntuacionDe(txtPais.getText().toUpperCase()));
+            } catch (PaisExcepcion e) {
+                txtArea.setText(e.getMessage());
+            }
+        }
     }
 
     private void cogerFoco() {
@@ -91,6 +112,11 @@ public class FestivalController {
         txtArea.setText("");
         cogerFoco();
 
+    }
+
+    @FXML
+    void salir(ActionEvent event) {
+        Platform.exit();
     }
 
 }
